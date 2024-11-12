@@ -18,8 +18,8 @@ const (
 	PersistentHttpThreads int    = 100
 	FileName              string = "./import/data.csv"
 
-	DikuTenant string = "diku"
-	Hostname   string = "http://localhost:9130"
+	Tenant   string = "diku"
+	Hostname string = "http://localhost:9130"
 
 	LoginUri      string = "authn/login"
 	LoginBody     string = `{"username":"%s","password":"%s"}`
@@ -72,7 +72,7 @@ func ParseCsvAndOpenOrdersInBulk() {
 	case <-blockingChannel:
 		slog.Info(CommandName, "Stopped, time", time.Now().Format(time.UnixDate))
 		elapsed := time.Since(start)
-		slog.Info(CommandName, "Elapsed, elapsed", elapsed)
+		slog.Info(CommandName, "Elapsed, duration", elapsed)
 	default:
 	}
 }
@@ -81,17 +81,17 @@ func GetOkapiToken() string {
 	loginUrl := fmt.Sprintf("%s/%s", Hostname, LoginUri)
 	loginHeaders := map[string]string{
 		util.ContentTypeHeader: util.JsonContentType,
-		util.XOkapiTenant:      DikuTenant,
+		util.XOkapiTenant:      Tenant,
 	}
 	loginBytes := []byte(fmt.Sprintf(LoginBody, Username, Password))
 	return util.DoPostReturnMapStringInteface(CommandName, loginUrl, EnableDebug, loginBytes, loginHeaders)[OkapiTokenKey].(string)
 }
 
-func GetAndOpenOrder(okapiToken string, orderId string, requestBlockingChannel *chan int) {
+func GetAndOpenOrder(okapiToken string, orderId string, blockingChannel *chan int) {
 	openOrderUrl := fmt.Sprintf("%s/%s/%s", Hostname, OrderUri, orderId)
 	openOrderHeaders := map[string]string{
 		util.ContentTypeHeader: util.JsonContentType,
-		util.XOkapiTenant:      DikuTenant,
+		util.XOkapiTenant:      Tenant,
 		util.XOkapiToken:       okapiToken,
 	}
 	compositeOrder := util.DoGetDecodeReturnMapStringInteface(CommandName, openOrderUrl, EnableDebug, true, openOrderHeaders)
@@ -102,5 +102,5 @@ func GetAndOpenOrder(okapiToken string, orderId string, requestBlockingChannel *
 		panic(err)
 	}
 	util.DoPutReturnNoContent(CommandName, openOrderUrl, EnableDebug, openOrderBytes, openOrderHeaders)
-	<-*requestBlockingChannel
+	<-*blockingChannel
 }
