@@ -18,5 +18,6 @@ ceb20319-4029-413a-9acf-35b9a943bb07,a31a6f0f-6899-477d-9ec7-98df2531858e,"10000
 - Build & Run
 
 ```shell
+mkdir -p bin
 env GOOS=windows GOARCH=amd64 go build -o ./bin . && ./bin/request-cli.exe 
 ```
