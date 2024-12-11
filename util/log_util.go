@@ -9,6 +9,7 @@ func LogWarn(commandName string, enableDebug bool, errorMessage string) {
 	if !enableDebug {
 		return
 	}
+
 	slog.Warn(commandName, errorMessage, "")
 }
 

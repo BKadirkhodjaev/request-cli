@@ -22,8 +22,10 @@ func DoGetDecodeReturnMapStringInteface(commandName string, url string, enableDe
 		slog.Error(commandName, "http.NewRequest error", "")
 		panic(err)
 	}
+
 	AddRequestHeaders(req, headers)
 	DumpHttpRequest(commandName, req, enableDebug)
+
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		if panicOnError {
@@ -38,7 +40,9 @@ func DoGetDecodeReturnMapStringInteface(commandName string, url string, enableDe
 		CheckStatusCodes(commandName, resp)
 		resp.Body.Close()
 	}()
+
 	DumpHttpResponse(commandName, resp, enableDebug)
+
 	err = json.NewDecoder(resp.Body).Decode(&respMap)
 	if err != nil {
 		if panicOnError {
@@ -49,19 +53,23 @@ func DoGetDecodeReturnMapStringInteface(commandName string, url string, enableDe
 			return nil
 		}
 	}
+
 	return respMap
 }
 
 func DoPostReturnMapStringInteface(commandName string, url string, enableDebug bool, bodyBytes []byte, headers map[string]string) map[string]interface{} {
 	var respMap map[string]interface{}
 	DumpHttpBody(commandName, enableDebug, bodyBytes)
+
 	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(bodyBytes))
 	if err != nil {
 		slog.Error(commandName, "http.NewRequest error", "")
 		panic(err)
 	}
+
 	AddRequestHeaders(req, headers)
 	DumpHttpRequest(commandName, req, enableDebug)
+
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		slog.Error(commandName, "http.DefaultClient.Do error", "")
@@ -71,7 +79,9 @@ func DoPostReturnMapStringInteface(commandName string, url string, enableDebug b
 		CheckStatusCodes(commandName, resp)
 		resp.Body.Close()
 	}()
+
 	DumpHttpResponse(commandName, resp, enableDebug)
+
 	err = json.NewDecoder(resp.Body).Decode(&respMap)
 	if err != nil {
 		slog.Error(commandName, "json.NewDecoder error", "")
@@ -83,13 +93,16 @@ func DoPostReturnMapStringInteface(commandName string, url string, enableDebug b
 
 func DoPutReturnNoContent(commandName string, url string, enableDebug bool, bodyBytes []byte, headers map[string]string) {
 	DumpHttpBody(commandName, enableDebug, bodyBytes)
+
 	req, err := http.NewRequest(http.MethodPut, url, bytes.NewBuffer(bodyBytes))
 	if err != nil {
 		slog.Error(commandName, "http.NewRequest error", "")
 		panic(err)
 	}
+
 	AddRequestHeaders(req, headers)
 	DumpHttpRequest(commandName, req, enableDebug)
+
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		slog.Error(commandName, "http.DefaultClient.Do error", "")
@@ -99,6 +112,7 @@ func DoPutReturnNoContent(commandName string, url string, enableDebug bool, body
 		CheckStatusCodes(commandName, resp)
 		resp.Body.Close()
 	}()
+
 	DumpHttpResponse(commandName, resp, enableDebug)
 }
 
@@ -107,6 +121,7 @@ func AddRequestHeaders(req *http.Request, headers map[string]string) {
 		req.Header.Add(ContentTypeHeader, JsonContentType)
 		return
 	}
+
 	for key, value := range headers {
 		req.Header.Add(key, value)
 	}
