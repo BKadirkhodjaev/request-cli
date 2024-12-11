@@ -29,7 +29,9 @@ func parseArgs() {
 	flag.BoolVar(&enableDebug, "debug", false, "Enable debug output of HTTP request and response")
 	flag.Parse()
 
-	slog.Info(CommandName, "Using arguments", fmt.Sprintf("gatewayHostname: %s, enableDebug: %t, threadCount: %d", environment, enableDebug, threadCount))
+	slog.Info(CommandName, "Using arguments", fmt.Sprintf("Environment: %s", environment))
+	slog.Info(CommandName, "Using arguments", fmt.Sprintf("Enable debug: %t", enableDebug))
+	slog.Info(CommandName, "Using arguments", fmt.Sprintf("Thread count: %d", threadCount))
 }
 
 func getGatewayHostname(environment string) string {
